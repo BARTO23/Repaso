@@ -1,0 +1,2 @@
+
+def fnt_candidatos():
