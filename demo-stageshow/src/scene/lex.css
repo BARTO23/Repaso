@@ -1,0 +1,743 @@
+/* Linear as it looks after its 2026 refresh: light, near-grayscale chrome in
+   one neutral family (the cool blue cast is gone), a dimmed sidebar that is
+   also the window frame, and the content in an inset white panel with a
+   hairline edge. Color is left only where Linear itself keeps it: the status
+   circles, label dots, avatars, and the indigo accent on the person the story
+   is about.
+
+   Every color is a token here, so the dark theme is one block below
+   (`theme="dark"`, or film.mjs --dark). */
+.lx-stage .ss-stage {
+  --gutter: 30px;
+  --ss-well: #ececeb;
+  --ss-canvas: #f5f5f4;
+  --ss-chrome: #f5f5f4;
+  --ss-surface: #fdfdfc;
+  --ss-raised: #ffffff;
+  --ss-line: #e6e6e4;
+  --ss-text: #6c6c69;
+  --ss-text-strong: #1d1d1c;
+  --ss-text-faint: #a2a29e;
+  --ss-icon: #7a7a76;
+  --ss-icon-faint: #b9b9b5;
+  --ss-accent-soft: rgba(94, 106, 210, 0.16);
+
+  --lx-nav-text: #5c5c59;
+  --lx-nav-active: #e9e9e7;
+  --lx-row-hover: #f3f3f2;
+  --lx-tile: #1d1d1c;
+  --lx-tile-text: #fdfdfc;
+  --lx-team-tile: #e4e4e2;
+  --lx-team-text: #4a4a47;
+  --lx-tab-active: #efefee;
+  --lx-chip-line: #e3e3e1;
+  --lx-pri-off: #cfcfcc;
+  --lx-pri-on: #6c6c69;
+  --lx-ring-todo: #a8a8a4;
+  --lx-ring-backlog: #b4b4b0;
+  --lx-progress: #e5b400;
+  --lx-done: #5e6ad2;
+  --lx-done-mark: #fdfdfc;
+  --lx-unassigned: #b0b0ac;
+  --lx-scrim: rgba(28, 28, 26, 0.06);
+  --lx-cmd-line: #ececea;
+  --lx-cmd-active: #f1f1f0;
+  --lx-cmd-text: #3a3a38;
+  --lx-cmd-chip: #f1f1f0;
+  --lx-cmd-chip-title: #3a3a38;
+  --lx-key-line: #e3e3e1;
+  --lx-key-active: #e6e6e4;
+  --lx-caret: #1d1d1c;
+  --lx-cmd-shadow: 0 0 0 1px rgba(0, 0, 0, 0.07), 0 24px 56px -16px rgba(0, 0, 0, 0.16), 0 8px 18px -8px rgba(0, 0, 0, 0.08);
+  --lx-panel-shadow: 0 0 0 1px var(--ss-line), 0 1px 2px rgba(0, 0, 0, 0.03);
+
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--ss-well);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* The same scene in Linear's refreshed dark theme: warm-neutral grays, no
+   blue cast, depth from lighter surfaces. */
+.lx-stage .ss-stage[data-theme="dark"] {
+  --ss-well: #0b0b0b;
+  --ss-canvas: #0e0e0e;
+  --ss-chrome: #0e0e0e;
+  --ss-surface: #121212;
+  --ss-raised: #1c1c1c;
+  --ss-line: #222221;
+  --ss-text: #8d8d8a;
+  --ss-text-strong: #ededec;
+  --ss-text-faint: #636361;
+  --ss-icon: #8d8d8a;
+  --ss-icon-faint: #4d4d4b;
+  --ss-accent-soft: rgba(94, 106, 210, 0.24);
+
+  --lx-nav-text: #a3a3a0;
+  --lx-nav-active: #1c1c1c;
+  --lx-row-hover: #191919;
+  --lx-tile: #ededec;
+  --lx-tile-text: #0e0e0e;
+  --lx-team-tile: #262626;
+  --lx-team-text: #c4c4c1;
+  --lx-tab-active: #1f1f1f;
+  --lx-chip-line: #2a2a29;
+  --lx-pri-off: #444442;
+  --lx-pri-on: #a3a3a0;
+  --lx-ring-todo: #a8a8a5;
+  --lx-ring-backlog: #696967;
+  --lx-progress: #f0bf00;
+  --lx-done: #5e6ad2;
+  --lx-done-mark: #121212;
+  --lx-unassigned: #696967;
+  --lx-scrim: rgba(0, 0, 0, 0.28);
+  --lx-cmd-line: #2a2a29;
+  --lx-cmd-active: #2a2a29;
+  --lx-cmd-text: #d2d2cf;
+  --lx-cmd-chip: #282827;
+  --lx-cmd-chip-title: #c8c8c5;
+  --lx-key-line: #333332;
+  --lx-key-active: #3a3a39;
+  --lx-caret: #ededec;
+  --lx-cmd-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 24px 60px -12px rgba(0, 0, 0, 0.7), 0 8px 20px -8px rgba(0, 0, 0, 0.5);
+  --lx-panel-shadow: 0 0 0 1px var(--ss-line);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.lx-icon {
+  flex-shrink: 0;
+  color: var(--ss-icon);
+}
+
+/* ---- Window: pinned a gutter in, runs off the bottom ---- */
+
+.lx-window {
+  position: absolute;
+  top: var(--gutter);
+  left: var(--gutter);
+  width: 860px;
+  height: 500px;
+  background: var(--ss-canvas);
+  box-shadow: var(--ss-shadow-hero);
+}
+
+[data-layout="compact"] .lx-window {
+  top: 16px;
+  left: 16px;
+  width: 388px;
+  height: 360px;
+}
+
+/* Without the sidebar there is no frame around the panel: the whole window
+   is the content surface */
+.lx-window:not([data-kind="sidebar"]),
+.lx-window:not([data-kind="sidebar"]) .ss-window__bar {
+  background: var(--ss-surface);
+}
+
+.lx-window .ss-window__side {
+  border-right: 0;
+}
+
+/* Linear's content sits in an inset panel inside the frame */
+.lx-window[data-kind="sidebar"] .ss-window__main {
+  margin: 8px 8px 0 0;
+  border-radius: 10px 10px 0 0;
+  /* The edge is a shadow, so the panel's own box meets the sidebar exactly */
+  box-shadow: var(--lx-panel-shadow);
+  overflow: hidden;
+}
+
+.lx-window .ss-window__bar {
+  gap: 10px;
+  background: transparent;
+}
+
+/* ---- Sidebar: dimmed, so the list leads ---- */
+
+.lx-side {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 2px 10px 0;
+}
+
+.lx-workspace {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 6px;
+}
+
+.lx-workspace__tile,
+.lx-team__tile {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: var(--lx-tile);
+  color: var(--lx-tile-text);
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Team icons lost their colored backgrounds in the refresh */
+.lx-team__tile {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--lx-team-tile);
+  color: var(--lx-team-text);
+  font-size: 9.5px;
+}
+
+.lx-compose {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--ss-surface);
+  box-shadow: 0 0 0 1px var(--ss-line);
+}
+
+.lx-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lx-section {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 8px;
+}
+
+.lx-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 6px;
+}
+
+.lx-nav[data-active] {
+  background: var(--lx-nav-active);
+}
+
+.lx-nav__label,
+.lx-team__name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ss-text-strong);
+}
+
+.lx-team__name {
+  color: var(--lx-nav-text);
+}
+
+.lx-team {
+  gap: 9px;
+}
+
+.lx-team .lx-icon {
+  margin-left: -3px;
+}
+
+.lx-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 14px;
+}
+
+.lx-icon--on {
+  color: var(--ss-text-strong);
+}
+
+/* ---- Header ---- */
+
+.lx-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 2px;
+}
+
+[data-layout="compact"] .lx-crumbs {
+  margin-left: 12px;
+}
+
+.lx-crumbs__team {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ss-text-strong);
+}
+
+/* Compact, rounded tabs that don't span the bar */
+.lx-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 10px;
+}
+
+.lx-tab {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px var(--ss-line);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ss-text-strong);
+}
+
+.lx-tab[data-active] {
+  background: var(--lx-tab-active);
+  box-shadow: none;
+}
+
+.lx-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lx-tool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 26px;
+  height: 26px;
+  border-radius: 13px;
+}
+
+.lx-tool--display {
+  padding: 0 10px;
+  box-shadow: inset 0 0 0 1px var(--ss-line);
+}
+
+[data-layout="compact"] .lx-tool--display {
+  padding: 0;
+}
+
+/* ---- List ---- */
+
+.lx-list {
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+}
+
+/* One column template, so ids, circles, avatars and dates line up */
+.lx-row {
+  display: grid;
+  grid-template-columns: 14px 54px 14px minmax(0, 1fr) 96px 18px 44px;
+  align-items: center;
+  column-gap: 12px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 6px;
+  transition: background-color 0.18s ease;
+}
+
+[data-layout="compact"] .lx-row {
+  grid-template-columns: 14px 54px 14px minmax(0, 1fr) 18px;
+}
+
+.lx-row[data-focus] {
+  background: var(--lx-row-hover);
+  transition-duration: 0.06s;
+}
+
+.lx-id {
+  display: flex;
+  align-items: center;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ss-text);
+}
+
+.lx-title {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.lx-title__text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ss-text-strong);
+}
+
+.lx-labels {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lx-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 9px 0 8px;
+  border-radius: 11px;
+  box-shadow: inset 0 0 0 1px var(--lx-chip-line);
+}
+
+.lx-chip__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.lx-chip__dot[data-tone="0"] { background: #eb5757; }
+.lx-chip__dot[data-tone="1"] { background: #bb87fc; }
+.lx-chip__dot[data-tone="2"] { background: #4ea7fc; }
+
+.lx-date {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Priority bars */
+.lx-pri rect {
+  fill: var(--lx-pri-off);
+}
+
+.lx-pri rect[data-on] {
+  fill: var(--lx-pri-on);
+}
+
+.lx-pri[data-urgent] > rect:first-child {
+  fill: var(--lx-pri-on);
+}
+
+.lx-pri[data-urgent] .lx-pri__mark {
+  fill: var(--ss-surface);
+}
+
+/* Status circles */
+.lx-status {
+  overflow: visible;
+}
+
+.lx-status[data-status="backlog"] circle {
+  stroke: var(--lx-ring-backlog);
+}
+
+.lx-status[data-status="done"] circle {
+  fill: var(--lx-done);
+}
+
+.lx-status[data-status="done"] path {
+  stroke: var(--lx-done-mark);
+}
+
+.lx-status__ring {
+  stroke: var(--lx-ring-todo);
+  transition: stroke 0.25s ease;
+}
+
+.lx-status__pie {
+  stroke: var(--lx-progress);
+  stroke-dasharray: 0 100;
+  transition: stroke-dasharray 0.7s cubic-bezier(0.45, 0, 0.1, 1);
+}
+
+.lx-status[data-status="progress"] .lx-status__ring {
+  stroke: var(--lx-progress);
+}
+
+.lx-status[data-status="progress"] .lx-status__pie {
+  stroke-dasharray: 50 100;
+}
+
+/* Assignee */
+.lx-who {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+}
+
+.lx-unassigned {
+  overflow: visible;
+}
+
+.lx-unassigned circle:first-child {
+  stroke: var(--lx-unassigned);
+}
+
+.lx-unassigned circle:not(:first-child),
+.lx-unassigned path {
+  fill: var(--lx-unassigned);
+}
+
+.lx-avatar[data-face="0"] { background: #c08a6a; color: #fff; }
+.lx-avatar[data-face="1"] { background: #6f8fae; color: #fff; }
+.lx-avatar[data-face="2"] { background: #8d7fae; color: #fff; }
+
+/* The unassigned mark and the avatar share one slot and crossfade; the
+   avatar's disc grows a touch as it arrives while its initial only fades
+   (a letter that ends a scale hops as it lands) */
+.lx-who__swap {
+  display: grid;
+  width: 18px;
+  height: 18px;
+}
+
+.lx-who__swap > * {
+  grid-area: 1 / 1;
+  transition: opacity 0.35s ease, scale 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.lx-who__me {
+  position: relative;
+  isolation: isolate;
+  opacity: 0;
+  background: none;
+}
+
+.lx-who__me::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--ss-accent);
+  scale: 0.6;
+  transition: scale 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.lx-who__swap[data-assigned] .lx-who__me {
+  opacity: 1;
+}
+
+.lx-who__swap[data-assigned] .lx-who__me::before {
+  scale: 1;
+}
+
+.lx-who__swap[data-assigned] .lx-unassigned {
+  opacity: 0;
+  scale: 0.8;
+}
+
+
+
+/* =========================================================
+   Lex: what differs from the linear gold
+   ========================================================= */
+.lx-stage .ss-stage {
+  --lx-active: #2e7d4f;
+  --lx-review: #c98a14;
+  --lx-potential: #8b8b86;
+  --lx-inactive: #c4c4c0;
+  --lx-peek-shadow: -1px 0 0 var(--ss-line), -24px 0 48px -24px rgba(0, 0, 0, 0.18);
+}
+
+.lx-workspace__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ss-text-strong);
+}
+
+/* Status, area, responsible lawyer, next hearing */
+.lx-row {
+  grid-template-columns: 14px minmax(0, 1fr) 128px 18px 64px;
+}
+[data-layout="compact"] .lx-row {
+  grid-template-columns: 14px minmax(0, 1fr) 18px;
+}
+.lx-row[data-open] {
+  background: var(--lx-row-hover);
+}
+.lx-status circle { stroke: var(--lx-inactive); }
+.lx-status[data-status="activo"] circle { stroke: var(--lx-active); }
+.lx-status[data-status="activo"] circle:last-child { fill: var(--lx-active); stroke: none; }
+.lx-status[data-status="revision"] circle { stroke: var(--lx-review); }
+.lx-status[data-status="potencial"] circle { stroke: var(--lx-potential); }
+
+.lx-chip__text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ss-text);
+}
+.lx-chip__dot[data-tone="0"] { background: #3f8f6a; }
+.lx-chip__dot[data-tone="1"] { background: #4a77b4; }
+.lx-chip__dot[data-tone="2"] { background: #b5793a; }
+.lx-date__text {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--lx-active);
+}
+
+/* Search: a quiet field in the toolbar */
+.lx-search {
+  width: 210px;
+}
+[data-layout="compact"] .lx-search {
+  width: 168px;
+}
+.lx-search .ss-field__box {
+  height: 28px;
+  font-size: 12.5px;
+}
+
+/* The client's file */
+.lx-content {
+  position: relative;
+  height: 100%;
+}
+.lx-peek {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 330px;
+  padding: 18px 20px;
+  background: var(--ss-surface);
+  box-shadow: var(--lx-peek-shadow);
+  transform: translateX(calc(100% + 32px));
+  transition: transform 0.5s cubic-bezier(0.45, 0, 0.1, 1);
+}
+.lx-peek[data-open] {
+  transform: none;
+}
+/* The surface travels; its content stays faint until the window edge has passed,
+   so no word is ever seen sliced (fades out first on close) */
+.lx-peek {
+  will-change: transform;
+}
+.lx-peek > * {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.lx-peek[data-open] > * {
+  opacity: 1;
+  transition: opacity 0.24s ease 0.3s;
+}
+.lx-peek[data-compact] {
+  left: 0;
+  width: auto;
+}
+.lx-peek__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.lx-peek__id {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.lx-peek__name {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ss-text-strong);
+}
+.lx-peek__sub {
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--ss-text);
+}
+.lx-peek__badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lx-hearing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding-top: 16px;
+  box-shadow: inset 0 1px 0 var(--ss-line);
+}
+.lx-hearing__label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ss-text);
+}
+.lx-hearing__when {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ss-text-strong);
+}
+.lx-hearing__where {
+  font-size: 12.5px;
+  color: var(--ss-text);
+}
+.lx-remind {
+  margin-top: 10px;
+}
+.lx-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.lx-fact {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: center;
+}
+
+/* Search results also list the client's case files */
+.lx-group-head {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  margin-top: 6px;
+  padding: 0 12px;
+}
+.lx-group-head__text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ss-text);
+}
+.lx-case__text {
+  font-size: 13px;
+  color: var(--ss-text-strong);
+}
+.lx-ref {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ss-text);
+}
+
+/* Phone column: a second design, not a squeeze. The window stays whole across
+   with an even 16px gutter and runs off the bottom only */
+[data-layout="compact"] .lx-window {
+  top: 16px;
+  left: 16px;
+  width: 326px;
+  height: 380px;
+}
+[data-layout="compact"] .lx-search {
+  width: 150px;
+}
+[data-layout="compact"] .lx-crumbs {
+  margin-left: 8px;
+}
+.lx-peek__id {
+  flex: 1;
+}
+[data-layout="compact"] .lx-row {
+  padding-right: 10px;
+}
