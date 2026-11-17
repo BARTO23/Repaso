@@ -14,14 +14,14 @@
   const int = (a, b) => Math.floor(a + rnd() * (b - a + 1));
 
   const AREAS = {
-    'Corporativo':           { color: '#3b5bdb', icon: 'building' },
-    'Penal':                 { color: '#e03131', icon: 'gavel' },
-    'Laboral':               { color: '#f08c00', icon: 'briefcase' },
-    'Familia':               { color: '#d6336c', icon: 'users' },
-    'Tributario':            { color: '#2f9e44', icon: 'wallet' },
-    'Propiedad Intelectual': { color: '#7048e8', icon: 'file' },
-    'Inmobiliario':          { color: '#0c8599', icon: 'pin' },
-    'Civil':                 { color: '#a07a3a', icon: 'scale' },
+    'Corporativo':           { color: '#2f5d8a', icon: 'building' },
+    'Penal':                 { color: '#9b2c2c', icon: 'gavel' },
+    'Laboral':               { color: '#a8641c', icon: 'briefcase' },
+    'Familia':               { color: '#a2456e', icon: 'heart' },
+    'Tributario':            { color: '#2e7d5b', icon: 'receipt' },
+    'Propiedad Intelectual': { color: '#55509a', icon: 'copyright' },
+    'Inmobiliario':          { color: '#23727a', icon: 'house' },
+    'Civil':                 { color: '#6e6a3a', icon: 'scale' },
   };
 
   const ESTADOS = ['Activo', 'En revisión', 'Potencial', 'Inactivo'];
@@ -83,7 +83,14 @@
   const slug = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '.').replace(/^\.|\.$/g, '');
   const today = new Date(2026, 10, 17);
   const daysAgo = (d) => new Date(today.getTime() - d * 864e5).toISOString().slice(0, 10);
-  const daysAhead = (d) => new Date(today.getTime() + d * 864e5).toISOString().slice(0, 10);
+  // Las audiencias solo caen en días hábiles
+  const daysAhead = (d) => {
+    const x = new Date(today.getTime() + d * 864e5);
+    const w = x.getDay();
+    if (w === 6) x.setDate(x.getDate() + 2);
+    if (w === 0) x.setDate(x.getDate() + 1);
+    return x.toISOString().slice(0, 10);
+  };
 
   const clientes = BASE.map(([nombre, tipo, area], idx) => {
     const posibles = ABOGADOS.filter((a) => a.areas.includes(area));
@@ -107,7 +114,7 @@
     return {
       id: 'c' + String(idx + 1).padStart(3, '0'),
       nombre, tipo, area, estado, abogado,
-      contacto: tipo === 'Empresa' ? pick(['Ana Beltrán', 'Jorge Lozano', 'Marcela Duarte', 'Felipe Arango', 'Laura Pineda']) + ' · Gerencia' : '',
+      contacto: tipo === 'Empresa' ? pick(['Ana Beltrán', 'Jorge Lozano', 'Marcela Duarte', 'Felipe Arango', 'Laura Pineda']) + ' (gerencia)' : '',
       email,
       telefono: `+57 3${int(0, 2)}${int(0, 9)} ${int(100, 999)} ${int(1000, 9999)}`,
       ciudad: pick(CIUDADES),
