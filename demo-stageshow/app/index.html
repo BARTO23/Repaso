@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f5f5f4" />
+  <title>Clientes | Lex &amp; Asociados</title>
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="side" aria-label="Navegación">
+      <div class="workspace" translate="no">Lex &amp; Asociados</div>
+      <div class="group">
+        <button class="nav" data-soon="Bandeja"><svg class="i" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>Bandeja</button>
+        <button class="nav" data-soon="Agenda"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Agenda</button>
+      </div>
+      <div class="group">
+        <div class="section">Despacho</div>
+        <button class="nav" aria-current="page"><svg class="i" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Clientes<span class="count" id="navCount"></span></button>
+        <button class="nav" data-soon="Expedientes"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Expedientes</button>
+        <button class="nav" data-soon="Documentos"><svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/></svg>Documentos</button>
+      </div>
+    </aside>
+
+    <main class="panel">
+      <header class="bar">
+        <h1>Clientes</h1>
+        <div class="tabs" role="group" aria-label="Filtrar clientes">
+          <button class="tab" data-tab="todos" aria-pressed="true">Todos <span id="cTodos"></span></button>
+          <button class="tab" data-tab="activos" aria-pressed="false">Activos <span id="cActivos"></span></button>
+          <button class="tab" data-tab="audiencia" aria-pressed="false">Con audiencia <span id="cAud"></span></button>
+        </div>
+        <div class="spacer"></div>
+        <div class="search" role="search">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="q" type="search" placeholder="Buscar clientes y expedientes…" autocomplete="off" spellcheck="false" aria-label="Buscar clientes y expedientes" />
+          <kbd aria-hidden="true">/</kbd>
+        </div>
+        <button class="btn btn-primary" id="newBtn"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nuevo cliente</button>
+      </header>
+      <div class="content">
+        <div class="list" id="list" aria-live="polite"></div>
+        <aside class="peek" id="peek" hidden aria-label="Ficha del cliente"></aside>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="newDialog" aria-labelledby="newTitle">
+    <form id="newForm" novalidate>
+      <h2 id="newTitle">Nuevo cliente</h2>
+      <p>Podrás completar el resto de datos después.</p>
+      <label id="lNombre">Nombre o razón social
+        <input name="nombre" autocomplete="organization" placeholder="Grupo Horizonte SAS…" />
+        <span class="err">Escribe al menos 3 caracteres.</span>
+      </label>
+      <label id="lEmail">Correo
+        <input name="email" type="email" inputmode="email" autocomplete="email" spellcheck="false" placeholder="contacto@empresa.com…" />
+        <span class="err">Usa el formato nombre@dominio.com.</span>
+      </label>
+      <label>Área de práctica
+        <select name="area" id="fArea"></select>
+      </label>
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" id="cancelNew">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="createBtn">Crear cliente</button>
+      </div>
+    </form>
+  </dialog>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

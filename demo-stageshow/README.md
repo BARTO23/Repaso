@@ -4,7 +4,20 @@ Una ilustración animada del producto, hecha solo con la skill [stageshow](https
 
 **Esto no es un directorio que funcione.** Stageshow sirve para crear interfaces de producto falsas, en imagen fija o animadas con un cursor guionizado, como las que se ponen en la portada de una web o en una tarjeta de funcionalidad. Los clics no hacen nada real: `a.click()` solo dibuja la pulsación y `a.set()` cambia la escena.
 
-## Cómo verlo
+## La página que se puede usar
+
+`lex-app.html` es la versión funcional del mismo diseño, en un solo archivo. Esto va **más allá de lo que hace stageshow**: la skill solo genera demos animadas, así que la app se construyó a mano tomando el aspecto de la escena (colores, tipografía, lista, chips de área y ficha lateral). Incluye:
+
+- **Búsqueda:** sin tildes, también devuelve expedientes.
+- **Pestañas:** Todos, Activos y Con audiencia.
+- **Ficha lateral:** con la próxima audiencia y un recordatorio que se puede activar o deshacer.
+- **Alta de clientes:** formulario con validación.
+- **Teclado:** `/` busca, las flechas recorren la lista y `Esc` cierra la ficha o borra la búsqueda.
+- **Responsive:** se adapta al móvil.
+
+Los cambios se guardan en el navegador (localStorage). El código fuente está en `app/`.
+
+## Cómo ver la demo
 
 Abre `lex-clientes-demo.html` en el navegador: es un solo archivo con todo incluido.
 
