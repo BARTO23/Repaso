@@ -2,28 +2,26 @@
 <html lang="es" data-theme="light">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Clientes · Lex &amp; Asociados</title>
-  <meta name="theme-color" content="#e9ece8" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#0e1412" media="(prefers-color-scheme: dark)" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Resumen | Lex &amp; Asociados</title>
+  <meta name="theme-color" content="#fafafa" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Spectral:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script>
-    // Tema y menú guardados, aplicados antes del primer pintado
     try {
       const t = localStorage.getItem('lex-theme') ||
         (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.dataset.theme = t;
-      if (localStorage.getItem('lex-sidebar') === 'collapsed') document.documentElement.classList.add('sb-collapsed');
+      document.querySelector('meta[name="theme-color"]').content = t === 'dark' ? '#0a0a0a' : '#fafafa';
     } catch (e) {}
   </script>
 </head>
 <body>
   <a class="skip-link" href="#view">Saltar al contenido</a>
 
-  <!-- Iconos: Phosphor Icons (MIT) · regular y fill -->
+  <!-- Iconos: Phosphor Icons (MIT) -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <symbol id="i-dashboard" viewBox="0 0 256 256"><path d="M104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm0,64H56V56h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,64H152V56h48v48Zm-96,32H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm0,64H56V152h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,200,136Zm0,64H152V152h48v48Z"/></symbol>
@@ -129,76 +127,62 @@
     </defs>
   </svg>
 
-  <div class="app">
-    <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
-      <div class="brand" translate="no">
-        <strong>Lex &amp; Asociados</strong>
-        <span>Firma de abogados</span>
-      </div>
+  <header class="header">
+    <div class="header-top">
+      <a class="wordmark" href="#/dashboard" translate="no" aria-label="Lex &amp; Asociados, ir al resumen">
+        <svg class="i" aria-hidden="true"><use href="#i-scale"/></svg>
+        <span>Lex &amp; Asociados</span>
+      </a>
+      <span class="slash" aria-hidden="true">/</span>
+      <span class="context">Despacho Bogotá</span>
 
-      <nav class="nav" id="nav">
-        <span class="nav-label">Despacho</span>
-        <a href="#/dashboard" data-route="dashboard"><svg class="i" aria-hidden="true"><use href="#i-dashboard"/></svg><span>Resumen</span></a>
-        <a href="#/clientes" data-route="clientes"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><span>Clientes</span><b class="nav-badge" id="navCount">0</b></a>
-        <a href="#" data-soon><svg class="i" aria-hidden="true"><use href="#i-folder"/></svg><span>Expedientes</span></a>
-        <a href="#" data-soon><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg><span>Agenda</span></a>
-        <span class="nav-label">Administración</span>
-        <a href="#" data-soon><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Documentos</span></a>
-        <a href="#" data-soon><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg><span>Facturación</span></a>
-        <a href="#" data-soon><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg><span>Ajustes</span></a>
-        <span class="nav-indicator" id="navIndicator" aria-hidden="true"></span>
-      </nav>
-
-      <button class="sb-collapse" id="sbCollapse" aria-label="Contraer menú">
-        <svg class="i" aria-hidden="true"><use href="#i-panel"/></svg><span>Contraer menú</span>
-      </button>
-    </aside>
-    <div class="sb-backdrop" id="sbBackdrop"></div>
-
-    <div class="main">
-      <header class="topbar">
-        <button class="icon-btn only-mobile" id="sbOpen" aria-label="Abrir menú"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
-        <button class="search-trigger" id="openPalette" aria-label="Buscar clientes y acciones">
+      <div class="header-actions">
+        <button class="search-trigger" id="openPalette" type="button" aria-label="Buscar clientes y acciones">
           <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
-          <span>Buscar un cliente o una acción…</span>
-          <kbd>Ctrl&nbsp;K</kbd>
+          <span>Buscar…</span>
+          <kbd id="kbdHint">Ctrl&nbsp;K</kbd>
         </button>
-        <div class="topbar-actions">
-          <button class="icon-btn" id="themeToggle" aria-label="Cambiar entre tema claro y oscuro">
-            <svg class="i sun" aria-hidden="true"><use href="#i-sun"/></svg>
-            <svg class="i moon" aria-hidden="true"><use href="#i-moon"/></svg>
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="Cambiar entre tema claro y oscuro">
+          <svg class="i sun" aria-hidden="true"><use href="#i-sun"/></svg>
+          <svg class="i moon" aria-hidden="true"><use href="#i-moon"/></svg>
+        </button>
+        <div class="pop-wrap">
+          <button class="icon-btn" id="notifBtn" type="button" aria-label="Notificaciones, 3 sin leer" aria-expanded="false" aria-controls="notifPop">
+            <svg class="i" aria-hidden="true"><use href="#i-bell"/></svg><span class="ping" aria-hidden="true"></span>
           </button>
-          <div class="pop-wrap">
-            <button class="icon-btn" id="notifBtn" aria-label="Notificaciones" aria-expanded="false" aria-controls="notifPop">
-              <svg class="i" aria-hidden="true"><use href="#i-bell"/></svg><span class="ping" aria-hidden="true"></span>
-            </button>
-            <div class="popover" id="notifPop" role="dialog" aria-label="Notificaciones"></div>
-          </div>
-          <div class="me">
-            <div class="avatar sm round" style="--h:150" aria-hidden="true">EV</div>
-            <div class="me-text"><strong>Elena Vargas</strong><span>Socia directora</span></div>
-          </div>
+          <div class="popover" id="notifPop" role="dialog" aria-label="Notificaciones"></div>
         </div>
-      </header>
-
-      <main class="view" id="view" tabindex="-1"></main>
+        <span class="user-avatar" style="--h:150" role="img" aria-label="Elena Vargas, socia directora"></span>
+      </div>
     </div>
-  </div>
+
+    <nav class="tabs-nav" id="nav" aria-label="Secciones">
+      <a href="#/dashboard" data-route="dashboard">Resumen</a>
+      <a href="#/clientes" data-route="clientes">Clientes <span class="count" id="navCount">0</span></a>
+      <a href="#" data-soon>Expedientes</a>
+      <a href="#" data-soon>Agenda</a>
+      <a href="#" data-soon>Documentos</a>
+      <a href="#" data-soon>Facturación</a>
+      <a href="#" data-soon>Ajustes</a>
+    </nav>
+  </header>
+
+  <main class="view" id="view" tabindex="-1"></main>
 
   <div class="overlay" id="overlay"></div>
-  <aside class="drawer" id="drawer" aria-hidden="true" aria-label="Ficha del cliente"></aside>
+  <aside class="drawer" id="drawer" aria-hidden="true" inert></aside>
   <div class="modal" id="modal" aria-hidden="true"></div>
-  <div class="palette" id="palette" aria-hidden="true">
-    <div class="palette-box" role="dialog" aria-label="Búsqueda rápida">
+  <div class="palette" id="palette" aria-hidden="true" inert>
+    <div class="palette-box" role="dialog" aria-modal="true" aria-label="Búsqueda rápida">
       <div class="palette-input">
         <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
-        <input id="paletteInput" placeholder="Nombre, ciudad, área o acción…" autocomplete="off" spellcheck="false" aria-label="Buscar" />
+        <input id="paletteInput" placeholder="Busca un cliente o una acción…" autocomplete="off" spellcheck="false" aria-label="Buscar" aria-controls="paletteList" />
         <kbd>Esc</kbd>
       </div>
-      <div class="palette-list" id="paletteList" role="listbox"></div>
+      <div class="palette-list" id="paletteList" role="listbox" aria-label="Resultados"></div>
     </div>
   </div>
-  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
 
   <script src="data.js"></script>
   <script src="app.js"></script>
