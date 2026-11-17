@@ -105,7 +105,7 @@ const clientHref = (id) => `#/clientes/${id}${queryString()}`;
 function writeUrl() {
   if (current !== 'clientes') return;
   const url = `#/clientes${drawerId ? '/' + drawerId : ''}${queryString()}`;
-  if (location.hash !== url) history.replaceState(null, '', url);
+  if (routeHash !== url) { routeHash = url; safeUrl('replaceState', url); }
 }
 
 /* ---------------------------------------------------------
@@ -186,8 +186,19 @@ function toast(msg, { type = 'ok', action = null, duration = 4000 } = {}) {
    Router
    --------------------------------------------------------- */
 let current = null;
+/* La ruta vive en memoria y se refleja en la URL cuando el navegador lo permite.
+   Así la página funciona también dentro de visores aislados (iframes, vistas previas)
+   donde la dirección no se puede modificar. */
+let routeHash = '#/dashboard';
+function safeUrl(method, url) { try { history[method](null, '', url); return true; } catch { return false; } }
+function go(url) {
+  if (url === routeHash) return;
+  routeHash = url;
+  safeUrl('pushState', url);
+  route();
+}
 function parseHash() {
-  const raw = location.hash.replace(/^#\/?/, '');
+  const raw = routeHash.replace(/^#\/?/, '');
   const [path, qs = ''] = raw.split('?');
   const p = path.split('/');
   return { page: p[0] || 'dashboard', id: p[1] || null, params: new URLSearchParams(qs) };
@@ -763,7 +774,7 @@ let drawerId = null, drawerTab = 'resumen', lastFocus = null;
 
 function openDrawer(id) {
   const c = byId(id);
-  if (!c) { location.hash = `#/clientes${queryString()}`; return; }
+  if (!c) { go(`#/clientes${queryString()}`); return; }
   const wasOpen = $('#drawer').classList.contains('open');
   if (drawerId !== id) drawerTab = 'resumen';
   drawerId = id;
@@ -784,7 +795,7 @@ function closeDrawer(silent) {
   dr.classList.remove('open');
   dr.setAttribute('aria-hidden', 'true');
   syncOverlay();
-  if (!silent && parseHash().id) location.hash = `#/clientes${queryString()}`;
+  if (!silent && parseHash().id) go(`#/clientes${queryString()}`);
   if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
 }
 
@@ -990,7 +1001,7 @@ function saveForm(id) {
   closeModal(true);
   if (!id) {
     resetFilters(); F.sort = 'act:desc';
-    if (current !== 'clientes') location.hash = '#/clientes';
+    if (current !== 'clientes') go('#/clientes');
     else { $('#q').value = ''; refresh(); }
     setTimeout(() => {
       const el = $(`[data-key="${c.id}"] .folder-body, tr[data-key="${c.id}"]`);
@@ -1042,10 +1053,10 @@ function syncOverlay(force) {
 let palSel = 0, palRun = [];
 const ACTIONS = [
   { label: 'Crear un cliente', hint: 'Abre el formulario de alta', icon: 'plus', kbd: 'N', fn: () => openForm() },
-  { label: 'Ir al resumen', hint: 'Agenda, cifras y bitácora', icon: 'dashboard', fn: () => { location.hash = '#/dashboard'; } },
-  { label: 'Ir a clientes', hint: 'Todo el directorio', icon: 'users', fn: () => { location.hash = '#/clientes'; } },
-  { label: 'Ver favoritos', hint: 'Clientes marcados con estrella', icon: 'star', fn: () => { location.hash = '#/clientes?favoritos=1'; } },
-  { label: 'Ver clientes con audiencia', hint: 'Audiencias programadas', icon: 'gavel', fn: () => { location.hash = '#/clientes?audiencia=1'; } },
+  { label: 'Ir al resumen', hint: 'Agenda, cifras y bitácora', icon: 'dashboard', fn: () => { go('#/dashboard'); } },
+  { label: 'Ir a clientes', hint: 'Todo el directorio', icon: 'users', fn: () => { go('#/clientes'); } },
+  { label: 'Ver favoritos', hint: 'Clientes marcados con estrella', icon: 'star', fn: () => { go('#/clientes?favoritos=1'); } },
+  { label: 'Ver clientes con audiencia', hint: 'Audiencias programadas', icon: 'gavel', fn: () => { go('#/clientes?audiencia=1'); } },
   { label: 'Cambiar el tema', hint: 'Claro u oscuro', icon: 'moon', fn: () => toggleTheme() },
   { label: 'Exportar clientes a CSV', hint: 'Descarga el listado filtrado', icon: 'download', fn: () => exportCSV() },
   { label: 'Restablecer los datos de ejemplo', hint: 'Descarta los cambios guardados en este navegador', icon: 'undo', fn: () => { clients = JSON.parse(JSON.stringify(D.clientes)); save(); refresh(); toast('Datos de ejemplo restablecidos.'); } },
@@ -1084,7 +1095,7 @@ function renderPalette() {
   let html = '';
   if (cls.length) {
     html += `<div class="pl-group">Clientes</div>`;
-    html += cls.map((c) => { palRun.push(() => { location.hash = `#/clientes/${c.id}`; }); return `<button type="button" role="option" class="pl-item" data-pi="${palRun.length - 1}">${avatar(c.nombre, 'sm')}<div><strong>${mark(c.nombre, q)}</strong><small>${esc(c.area)}, ${esc(c.ciudad)}</small></div><kbd>Enter</kbd></button>`; }).join('');
+    html += cls.map((c) => { palRun.push(() => { go(`#/clientes/${c.id}`); }); return `<button type="button" role="option" class="pl-item" data-pi="${palRun.length - 1}">${avatar(c.nombre, 'sm')}<div><strong>${mark(c.nombre, q)}</strong><small>${esc(c.area)}, ${esc(c.ciudad)}</small></div><kbd>Enter</kbd></button>`; }).join('');
   }
   if (acts.length) {
     html += `<div class="pl-group">Acciones</div>`;
@@ -1310,9 +1321,19 @@ addEventListener('resize', debounce(() => {
   if (current === 'clientes') segPill($('#viewSeg'));
   const act = $('#nav a.active'); if (act) $('#navIndicator').style.transform = `translateY(${act.offsetTop}px)`;
 }, 150));
-addEventListener('hashchange', route);
+// Enlaces internos: navegación en memoria (Ctrl/⌘ + clic sigue abriendo otra pestaña)
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#/"]');
+  if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  go(a.getAttribute('href'));
+}, true);
+const syncFromUrl = () => { let h = ''; try { h = location.hash; } catch { /* */ } if (h.startsWith('#/') && h !== routeHash) { routeHash = h; route(); } };
+addEventListener('hashchange', syncFromUrl);
+addEventListener('popstate', syncFromUrl);
 
 /* Inicio */
 updateNavCount();
-if (!location.hash) history.replaceState(null, '', '#/dashboard');
+try { if (location.hash.startsWith('#/')) routeHash = location.hash; } catch { /* */ }
+if (routeHash === '#/dashboard') safeUrl('replaceState', routeHash);
 route();
